@@ -28,7 +28,7 @@ public class PlayerController : MonoBehaviour
 
     public void UpdateHandlerBasedOnScene(int scene)
     {
-        if (!_currentControlsHandler)
+        if (_currentControlsHandler)
             Destroy(_currentControlsHandler.gameObject);
         _currentControlsHandler = Instantiate(controlsHandlerPrefabs[scene], _transform)
             .GetComponent<AbstractControlsHandler>();

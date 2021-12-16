@@ -3,13 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [CustomEditor(typeof(SplineController))]
 public class SplineControllerEditor : Editor
 {
     public override void OnInspectorGUI()
     {
-        base.OnInspectorGUI();
 
         var obj = (SplineController) target;
         if (GUILayout.Button("Recalculate Spline"))
@@ -18,6 +18,7 @@ public class SplineControllerEditor : Editor
             obj.RecalculateLengths();
         if (GUILayout.Button("Recalculate Equidistant Spline"))
             obj.RecalculateEquidistantSpline();
+        base.OnInspectorGUI();
     }
 }
 
@@ -28,6 +29,10 @@ public class SplineController : MonoBehaviour
     [SerializeField, Range(0, 0.25f)] private float calculationStepLength;
     [SerializeField, Range(0, 0.25f)] private float firstProximityCheckStepLength;
 
+    [SerializeField] private List<Vector3> calculatedPoints = new List<Vector3>();
+    [SerializeField] private List<float> lengths = new List<float>();
+    [SerializeField] private float totalLength;
+    
     [Header("Debug properties")] [SerializeField]
     private int debugPointsSampleSize;
 
@@ -49,11 +54,6 @@ public class SplineController : MonoBehaviour
 
     [SerializeField] private bool showCalculatedPath;
     [SerializeField] private Color calculatedPathColor;
-
-    private List<Vector3> _calculatedPoints = new List<Vector3>();
-
-    private List<float> _lengths = new List<float>();
-    private float _totalLength;
 
     public Vector3 GetPoint(float t)
     {
@@ -87,11 +87,11 @@ public class SplineController : MonoBehaviour
 
     public Vector3 GetEquidistantPoint(float t)
     {
-        float lenOfT = t * _totalLength;
+        float lenOfT = t * totalLength;
         int i1 = 0;
 
-        while (lenOfT > _lengths[i1] + 1)
-            lenOfT -= _lengths[i1++];
+        while (lenOfT > lengths[i1] + 1)
+            lenOfT -= lengths[i1++];
 
         int i0, i2, i3;
         int len = splinePoints.Count;
@@ -100,7 +100,7 @@ public class SplineController : MonoBehaviour
         i2 = (i1 + 1) % len;
         i3 = (i2 + 1) % len;
 
-        t = lenOfT / _lengths[i1];
+        t = lenOfT / lengths[i1];
         float tt = t * t, ttt = tt * t;
 
         float mul0 = -ttt + 2 * tt - t;
@@ -120,33 +120,33 @@ public class SplineController : MonoBehaviour
         return result;
     }
 
-    public Vector3 GetPrecalculatedPoint(float t) => _calculatedPoints[(int) ((_calculatedPoints.Count - 1) * t)];
+    public Vector3 GetPrecalculatedPoint(float t) => calculatedPoints[(int) ((calculatedPoints.Count - 1) * t)];
 
     public void RecalculateSpline()
     {
-        _calculatedPoints.Clear();
+        calculatedPoints.Clear();
         float deltaT = 1f / pointsSampleSize;
         for (float t = 0; t <= 1; t += deltaT)
-            _calculatedPoints.Add(GetPoint(t));
+            calculatedPoints.Add(GetPoint(t));
     }
 
     public void RecalculateEquidistantSpline()
     {
-        _calculatedPoints.Clear();
+        calculatedPoints.Clear();
         RecalculateLengths();
         float deltaT = 1f / pointsSampleSize;
         for (float t = 0; t <= 1; t += deltaT)
-            _calculatedPoints.Add(GetEquidistantPoint(t));
+            calculatedPoints.Add(GetEquidistantPoint(t));
     }
 
     public void RecalculateLengths()
     {
-        _lengths.Clear();
-        _totalLength = 0;
+        lengths.Clear();
+        totalLength = 0;
         for (int i = 0; i < splinePoints.Count; ++i)
         {
-            _lengths.Add(CalculateSegmentLength(i));
-            _totalLength += _lengths[i];
+            lengths.Add(CalculateSegmentLength(i));
+            totalLength += lengths[i];
         }
     }
 
@@ -173,7 +173,7 @@ public class SplineController : MonoBehaviour
 
         float minT = closestT < secondClosestT ? closestT : secondClosestT;
         float maxT = closestT > secondClosestT ? closestT : secondClosestT;
-        float deltaT = 1f / _calculatedPoints.Count;
+        float deltaT = 1f / calculatedPoints.Count;
 
         for (float t = minT; t <= maxT; t += deltaT)
         {
@@ -229,7 +229,7 @@ public class SplineController : MonoBehaviour
         {
             Gizmos.color = calculatedPathColor;
             lastPoint = GetPrecalculatedPoint(0);
-            foreach (var point in _calculatedPoints)
+            foreach (var point in calculatedPoints)
             {
                 Gizmos.DrawLine(lastPoint, point);
                 lastPoint = point;

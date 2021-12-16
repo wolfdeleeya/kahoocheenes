@@ -12,6 +12,13 @@ public class ClientManager : MonoBehaviour
     private Transform _transform;
     public static ClientManager Instance { get; private set; }
 
+    public int NumOfPlayers
+    {
+        get => _spawnedPlayerControllers.Count;
+    }
+
+    public GameObject GetPlayerController(int index) => _spawnedPlayerControllers[index];
+
     private void Awake()
     {
         if (Instance)
