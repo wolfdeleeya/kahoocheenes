@@ -1,7 +1,7 @@
 KAHOCHEENES PROTOKOL:
 	- server šalje igri:
 		++ Ej sad kad znam da si igra evo ti tvoj kod [0 x x x x] gdje je x kod od 4 velika slova nasumično generirana pod kojim je spremljena igra
-		-+ Ej klijent x šalje input y [0 x y]
+		-+ Ej klijent x šalje input y [0 x y u]
 		-+ Ej klijent x se uključio [0 x]
 	- server šalje kontroleru:
 		-+ Ej uspješno si prijavljen na tu igru kao klijent x (gdje je x>0) [1 x]
@@ -11,4 +11,4 @@ KAHOCHEENES PROTOKOL:
 		++ Ej ja sam igra s kodom xxxx i završila sam [0 x x x x]	
 	- kontroler šalje serveru:
 		-+ Ej ja sam kontroler i prijavio bi se na ovu igru [1 x x x x]
-		-+ Ej ja sam igrač z, odradi mi kontrolu y u igri xxxx(kontroler je vidljiv tek nakon što smo prijavljeni na igru) [1 z y x x x x]
+		-+ Ej ja sam igrač z, odradi mi kontrolu y u igri xxxx(kontroler je vidljiv tek nakon što smo prijavljeni na igru) [1 z y u x x x x]

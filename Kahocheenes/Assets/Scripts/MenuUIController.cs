@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MenuUIController : MonoBehaviour
 {
@@ -19,6 +20,21 @@ public class MenuUIController : MonoBehaviour
     [SerializeField] private MenuUIAnimator animator;
 
     [SerializeField] private TextMeshProUGUI gameCodeText;
+
+    [SerializeField] private Slider musicSlider;
+    [SerializeField] private Slider sfxSlider;
+
+    private void Start()
+    {
+        musicSlider.value = GameSettingsManager.Instance.MusicVolume;
+        sfxSlider.value = GameSettingsManager.Instance.SfxVolume;
+        NetworkControllerManager.Instance.OnConnectionCodeReceived.AddListener(SetGameCode);
+    }
+
+    private void OnDestroy()
+    {
+        NetworkControllerManager.Instance.OnConnectionCodeReceived.RemoveListener(SetGameCode);
+    }
 
     public void ChangeScreen(int targetScreen) => onScreenChanged.Invoke(targetScreen);
 

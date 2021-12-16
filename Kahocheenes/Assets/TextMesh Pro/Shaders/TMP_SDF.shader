@@ -188,9 +188,10 @@ Shader "TextMeshPro/Distance Field"
                 pixelSize /= float2(_ScaleX, _ScaleY) * abs(mul((float2x2)UNITY_MATRIX_P, _ScreenParams.xy));
                 float scale = rsqrt(dot(pixelSize, pixelSize));
                 scale *= abs(input.texcoord1.y) * _GradientScale * (_Sharpness + 1);
-                if (UNITY_MATRIX_P[3][3] == 0) scale = lerp(abs(scale) * (1 - _PerspectiveFilter), scale,
-                                                            abs(dot(UnityObjectToWorldNormal(input.normal.xyz),
-                                                                    normalize(WorldSpaceViewDir(vert)))));
+                if (UNITY_MATRIX_P[3][3] == 0)
+                    scale = lerp(abs(scale) * (1 - _PerspectiveFilter), scale,
+                                 abs(dot(UnityObjectToWorldNormal(input.normal.xyz),
+                                         normalize(WorldSpaceViewDir(vert)))));
 
                 float weight = lerp(_WeightNormal, _WeightBold, bold) / 4.0;
                 weight = (weight + _FaceDilate) * _ScaleRatioA * 0.5;

@@ -19,3 +19,8 @@ public class UnityEventFloat : UnityEvent<float>
 public class UnityEventInteger : UnityEvent<int>
 {
 }
+
+[Serializable]
+public class UnityEventControlsPair : UnityEvent<ControlsPair>
+{
+}
