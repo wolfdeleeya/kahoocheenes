@@ -1199,6 +1199,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 642053195}
+  - component: {fileID: 642053196}
   m_Layer: 5
   m_Name: Player HUB Screen
   m_TagString: Untagged
@@ -1227,6 +1228,21 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &642053196
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 642053194}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d901aec9254d3e54b9714d395a04f136, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onVotesChanged:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &705914666
 GameObject:
   m_ObjectHideFlags: 0
@@ -2253,7 +2269,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1058709080}
         m_TargetAssemblyTypeName: ClientManager, Assembly-CSharp
-        m_MethodName: OnClientConnected
+        m_MethodName: OnClientConnectedHandler
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2310,6 +2326,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e1a2b15d816db74e974da2769a98810, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnPlayerCreated:
+    m_PersistentCalls:
+      m_Calls: []
   playerControllerPrefab: {fileID: 2417565848006592260, guid: a621b8729fd8a11438eb1b6dceaa935b, type: 3}
 --- !u!4 &1058709081
 Transform:

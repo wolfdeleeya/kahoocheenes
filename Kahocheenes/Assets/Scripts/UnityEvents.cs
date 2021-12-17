@@ -24,3 +24,8 @@ public class UnityEventInteger : UnityEvent<int>
 public class UnityEventControlsPair : UnityEvent<ControlsPair>
 {
 }
+
+[Serializable]
+public class UnityEventGameObject : UnityEvent<GameObject>
+{
+}

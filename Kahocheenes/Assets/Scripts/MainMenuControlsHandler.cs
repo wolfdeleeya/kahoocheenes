@@ -14,26 +14,26 @@ public class MainMenuControlsHandler : AbstractControlsHandler
 
     public override void LeftCommand(ControlsState state)
     {
-        Debug.Log("Player " + PlayerID + (state == ControlsState.Up ? " RELEASED " : " PRESSED ") + " LEFT!");
+        Debug.Log("Player " + PlayerID + (state == ControlsState.Released ? " RELEASED " : " PRESSED ") + " LEFT!");
     }
 
     public override void RightCommand(ControlsState state)
     {
-        Debug.Log("Player " + PlayerID + (state == ControlsState.Up ? " RELEASED " : " PRESSED ") + " RIGHT!");
+        Debug.Log("Player " + PlayerID + (state == ControlsState.Released ? " RELEASED " : " PRESSED ") + " RIGHT!");
     }
 
     public override void UpCommand(ControlsState state)
     {
-        Debug.Log("Player " + PlayerID + (state == ControlsState.Up ? " RELEASED " : " PRESSED ") + " UP!");
+        Debug.Log("Player " + PlayerID + (state == ControlsState.Released ? " RELEASED " : " PRESSED ") + " UP!");
     }
 
     public override void DownCommand(ControlsState state)
     {
-        Debug.Log("Player " + PlayerID + (state == ControlsState.Up ? " RELEASED " : " PRESSED ") + " DOWN!");
+        Debug.Log("Player " + PlayerID + (state == ControlsState.Released ? " RELEASED " : " PRESSED ") + " DOWN!");
     }
 
     public override void ActionCommand(ControlsState state)
     {
-        Debug.Log("Player " + PlayerID + (state == ControlsState.Up ? " RELEASED " : " PRESSED ") + " ACTION!");
+        Debug.Log("Player " + PlayerID + (state == ControlsState.Released ? " RELEASED " : " PRESSED ") + " ACTION!");
     }
 }

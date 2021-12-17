@@ -34,9 +34,12 @@ public class SceneManager : MonoBehaviour
         Instance = this;
     }
 
-    public void ChangeScene(int sceneIndex)
+    public void ChangeScene(Scene scene)
     {
+        int sceneIndex = (int) scene;
         CurrentScene = sceneIndex;
         UnityEngine.SceneManagement.SceneManager.LoadScene(sceneIndex);
     }
+    
+    public enum Scene { MainMenu, Gameplay}
 }

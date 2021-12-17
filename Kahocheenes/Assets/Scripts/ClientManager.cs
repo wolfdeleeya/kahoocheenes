@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class ClientManager : MonoBehaviour
 {
+    [HideInInspector] public UnityEventGameObject OnPlayerCreated = new UnityEventGameObject();
     [SerializeField] private GameObject playerControllerPrefab;
 
     private List<GameObject> _spawnedPlayerControllers = new List<GameObject>();
@@ -32,11 +33,12 @@ public class ClientManager : MonoBehaviour
         _transform = transform;
     }
 
-    public void OnClientConnected(int clientId)
+    public void OnClientConnectedHandler(int clientId)
     {
         var player = Instantiate(playerControllerPrefab, _transform).GetComponent<PlayerController>();
         player.Initialize(clientId);
         _spawnedPlayerControllers.Add(player.gameObject);
+        OnPlayerCreated.Invoke(player.gameObject);
     }
 
     public void OnGameDisconnected()

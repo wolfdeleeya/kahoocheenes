@@ -9,8 +9,8 @@ public enum ControlsType
 
 public enum ControlsState
 {
-    Up,
-    Down
+    Released,
+    Pressed
 }
 
 public struct ControlsPair

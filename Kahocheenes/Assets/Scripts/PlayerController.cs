@@ -11,6 +11,11 @@ public class PlayerController : MonoBehaviour
 
     public int Id { get; private set; }
 
+    public AbstractControlsHandler CurrentControlsHandler
+    {
+        get => _currentControlsHandler;
+    }
+
     private void Awake()
     {
         _transform = transform;
