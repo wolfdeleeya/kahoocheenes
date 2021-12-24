@@ -8,6 +8,7 @@ using WebSocketSharp;
 
 public class NetworkControllerManager : MonoBehaviour
 {
+    public int MaxPlayers = 4;
     public UnityEventInteger OnClientConnected;
     public UnityEvent OnGameDisconnected;
 
@@ -89,6 +90,8 @@ public class NetworkControllerManager : MonoBehaviour
 
     private void ClientConnected(int clientID)
     {
+        if(clientID > MaxPlayers)               //VRATI MU PORUKU NE MOŽE!
+            return;
         _clientControlsEvents.Add(new UnityEventControlsPair());
         OnClientConnected.Invoke(clientID);
     }
