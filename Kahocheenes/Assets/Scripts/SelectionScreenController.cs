@@ -34,12 +34,27 @@ public class SelectionScreenController : MonoBehaviour
         ClientManager.Instance.OnPlayerCreated.AddListener(OnPlayerCreated);
     }
 
+    public void OnScreenChanged(int screenIndex)
+    {
+        if ((MenuController.UIComponentScreen) screenIndex == MenuController.UIComponentScreen.GameHub)
+            uiController.DeactivateAllPanels();
+        _currentVotes.Clear();
+        _selectedCars.Clear();
+        _selectedColors.Clear();
+        _matchStartVotes = 0;
+        foreach (var color in availableColors)
+            color.IsSelected = false;
+    }
+
     public void OnPlayerCreated(GameObject playerController)
     {
         _currentVotes.Add(false);
+        _selectedCars.Add(0);
+        _selectedColors.Add(0);
+        SwitchColor(_selectedColors.Count, true);
+        SwitchCar(_selectedColors.Count, true);
         uiController.PlayerConnected();
         onVotesChanged.Invoke(MatchStartVotes);
-        //dodaj inicijalizaciju početnih vozila i boja
     }
 
     public void ActionPressed(int playerID)
@@ -47,8 +62,7 @@ public class SelectionScreenController : MonoBehaviour
         int playerIndex = playerID - 1;
         _currentVotes[playerIndex] = !_currentVotes[playerIndex];
         MatchStartVotes += _currentVotes[playerIndex] ? 1 : -1;
-        _selectedCars.Add(0);
-        
+
         uiController.PlayerChangeVote(playerIndex, _currentVotes[playerIndex]);
     }
 
@@ -66,9 +80,9 @@ public class SelectionScreenController : MonoBehaviour
     public void SwitchCar(int playerID, bool isUp)
     {
         int playerIndex = playerID - 1;
-        int carIndex = (_selectedCars[playerIndex] + (isUp ? 1 : -1)) % carPrefabs.Count;
+        int carIndex = TrueMod(_selectedCars[playerIndex] + (isUp ? 1 : -1), carPrefabs.Count);
         _selectedCars[playerIndex] = carIndex;
-        uiController.ChangeVehicle(playerIndex, isUp);
+        uiController.ChangeVehicle(playerIndex, carIndex);
     }
 
     private void OnDestroy()
@@ -80,14 +94,25 @@ public class SelectionScreenController : MonoBehaviour
     {
         int numberOfColors = availableColors.Count;
         int increment = goRight ? 1 : -1;
-        for (int i = startFromIndex + 1; i != startFromIndex; i += increment)
+        for (int i = startFromIndex + increment; i != startFromIndex; i += increment)
         {
-            i %= numberOfColors;
+            i = TrueMod(i, numberOfColors);
             if (!availableColors[i].IsSelected)
                 return i;
         }
 
         return startFromIndex;
+    }
+
+
+    private int TrueMod(int n, int m)
+    {
+        if (n >= 0)
+            return n % m;
+
+        while (n < 0)
+            n += m;
+        return n;
     }
 
     [Serializable]

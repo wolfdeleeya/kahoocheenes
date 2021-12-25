@@ -14,6 +14,9 @@ public class NetworkControllerManager : MonoBehaviour
 
     [HideInInspector] public UnityEventString OnConnectionCodeReceived;
 
+    [SerializeField] private float pingTimeInSeconds = 10;
+    private readonly byte[] pingMessage = {9};
+
     private List<UnityEventControlsPair> _clientControlsEvents = new List<UnityEventControlsPair>();
     private WebSocket _serverSocket = new WebSocket("ws://rainy-carpal-leptoceratops.glitch.me");
     private string _connectionCode = String.Empty;
@@ -49,6 +52,7 @@ public class NetworkControllerManager : MonoBehaviour
 
         _serverSocket.Connect();
         _serverSocket.OnMessage += (sender, e) => _messageQueue.Enqueue(e.RawData);
+        StartCoroutine(PingCRT());
     }
 
     private void Update()
@@ -90,7 +94,7 @@ public class NetworkControllerManager : MonoBehaviour
 
     private void ClientConnected(int clientID)
     {
-        if(clientID > MaxPlayers)               //VRATI MU PORUKU NE MOŽE!
+        if (clientID > MaxPlayers) //VRATI MU PORUKU NE MOŽE!
             return;
         _clientControlsEvents.Add(new UnityEventControlsPair());
         OnClientConnected.Invoke(clientID);
@@ -126,5 +130,12 @@ public class NetworkControllerManager : MonoBehaviour
         for (int i = from; i < bytes.Length; ++i)
             result += (char) bytes[i];
         return result;
+    }
+
+    private IEnumerator PingCRT()
+    {
+        yield return new WaitForSeconds(pingTimeInSeconds);
+        _serverSocket.Send(pingMessage);
+        StartCoroutine(PingCRT());
     }
 }

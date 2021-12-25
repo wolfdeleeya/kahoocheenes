@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1ee14ea5131b8b468f51895f10ad540, type: 3}
+  m_Name: PlayerColor_Red
+  m_EditorClassIdentifier: 
+  CarMaterials:
+  - {fileID: 2100000, guid: 2edf757f8f5a07a48a4c7ce75735bca7, type: 2}
+  - {fileID: 2100000, guid: 2f1087fc2f0135341993f1c454ad975f, type: 2}
+  IndexesToSet:
+  - Indexes: 00000000
+  - Indexes: 0300000008000000
+  UIMaterial: {fileID: 2100000, guid: 67b03bb7a21e83349ab02041534188c6, type: 2}

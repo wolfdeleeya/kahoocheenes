@@ -7,11 +7,16 @@ using UnityEngine;
 public class SelectionScreenUIController : MonoBehaviour
 {
     [SerializeField] private List<SelectionPanelController> playerSelectionPanels;
-    [SerializeField] private TextMeshProUGUI voteCountText;
+    [SerializeField] private TextMeshProUGUI gameCodeText;
 
     private int _numOfPlayers;
 
-    public void ChangeVehicle(int index, bool isUp) => playerSelectionPanels[index].ChangeVehicle(isUp);
+    private void Start()
+    {
+        NetworkControllerManager.Instance.OnConnectionCodeReceived.AddListener(SetGameCode);
+    }
+
+    public void ChangeVehicle(int index, int carIndex) => playerSelectionPanels[index].ChangeVehicle(carIndex);
 
     public void ChangeMaterial(int index, PlayerColorSO playerColor) =>
         playerSelectionPanels[index].ChangeMaterial(playerColor);
@@ -20,5 +25,17 @@ public class SelectionScreenUIController : MonoBehaviour
 
     public void PlayerConnected() => playerSelectionPanels[_numOfPlayers++].Activate();
 
-    public void OnVoteCountChanged(int count) => voteCountText.text = count + " / " + _numOfPlayers;
+    public void SetGameCode(string code) => gameCodeText.text = code;
+
+    public void DeactivateAllPanels()
+    {
+        foreach (var panel in playerSelectionPanels)
+            panel.Deactivate();
+        _numOfPlayers = 0;
+    }
+    
+    private void OnDestroy()
+    {
+        NetworkControllerManager.Instance.OnConnectionCodeReceived.RemoveListener(SetGameCode);
+    }
 }

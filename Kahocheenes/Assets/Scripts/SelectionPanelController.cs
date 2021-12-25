@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class SelectionPanelController : MonoBehaviour
 {
-    [SerializeField] private Image playerVehicleImage;
+    [SerializeField] private RawImage playerVehicleImage;
     [SerializeField] private Image voteImage;
     [SerializeField] private Sprite voteForSprite;
     [SerializeField] private Sprite voteAgainstSprite;
@@ -17,6 +17,21 @@ public class SelectionPanelController : MonoBehaviour
     private int _currentVehicleIndex;
     private PlayerColorSO _currentColor;
 
+    private void Start()
+    {
+        Deactivate();
+    }
+
+    public void Deactivate()
+    {
+        playerVehicleImage.enabled = false;
+        voteImage.enabled = false;
+        playerBorder.enabled = false;
+        foreach (var vehicle in vehicleList)
+            vehicle.SetActive(true);
+        _currentVehicleIndex = 0;
+    }
+
     public void Activate()
     {
         playerVehicleImage.enabled = true;
@@ -24,20 +39,23 @@ public class SelectionPanelController : MonoBehaviour
         playerBorder.enabled = true;
     }
     
-    public void ChangeVehicle(bool isUp)
+    public void ChangeVehicle(int carIndex)
     {
         vehicleList[_currentVehicleIndex].SetActive(false);
-        _currentVehicleIndex += isUp ? 1 : -1;
+        _currentVehicleIndex = carIndex;
         _currentVehicleIndex %= vehicleList.Count;
         vehicleList[_currentVehicleIndex].SetActive(true);
-        vehicleRenderers[_currentVehicleIndex].materials[0] = _currentColor.CarMaterials[_currentVehicleIndex];
+        ChangeMaterial(_currentColor);
     }
 
     public void ChangeMaterial(PlayerColorSO playerColor)
     {
         playerBorder.material = playerColor.UIMaterial;
         _currentColor = playerColor;
-        vehicleRenderers[_currentVehicleIndex].materials[0] = _currentColor.CarMaterials[_currentVehicleIndex];
+        var materials = vehicleRenderers[_currentVehicleIndex].materials;
+        foreach (var index in playerColor.IndexesToSet[_currentVehicleIndex].Indexes)
+            materials[index] = _currentColor.CarMaterials[_currentVehicleIndex];
+        vehicleRenderers[_currentVehicleIndex].materials = materials;
     }
 
     public void ChangeVote(bool isFor) => voteImage.sprite = isFor ? voteForSprite : voteAgainstSprite;

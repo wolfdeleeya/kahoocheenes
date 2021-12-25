@@ -9,6 +9,7 @@ KAHOCHEENES PROTOKOL:
 	- igra šalje serveru:
 		++ Ej ja sam igra [0]
 		++ Ej ja sam igra s kodom xxxx i završila sam [0 x x x x]	
+		++ Ej još sam aktivna [9]
 	- kontroler šalje serveru:
 		-+ Ej ja sam kontroler i prijavio bi se na ovu igru [1 x x x x]
 		-+ Ej ja sam igrač z, odradi mi kontrolu y u igri xxxx(kontroler je vidljiv tek nakon što smo prijavljeni na igru) [1 z y u x x x x]
