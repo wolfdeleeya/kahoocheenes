@@ -189,6 +189,45 @@ public class SplineController : MonoBehaviour
         return GetPrecalculatedPoint(closestT);
     }
 
+    float FindTForPoint(Vector3 refPosition)
+    {
+        float closestT = 0, secondClosestT = 0;
+        float closestDist = (refPosition - GetPrecalculatedPoint(0)).magnitude, secondClosestDist = closestDist;
+
+        for (float t = firstProximityCheckStepLength; t <= 1; t += firstProximityCheckStepLength)
+        {
+            Vector3 nextPoint = GetPrecalculatedPoint(t);
+            float distance = (refPosition - nextPoint).magnitude;
+            if (distance < closestDist)
+            {
+                closestDist = distance;
+                closestT = t;
+            }
+            else if (distance < secondClosestDist)
+            {
+                secondClosestDist = distance;
+                secondClosestT = t;
+            }
+        }
+
+        float minT = closestT < secondClosestT ? closestT : secondClosestT;
+        float maxT = closestT > secondClosestT ? closestT : secondClosestT;
+        float deltaT = 1f / calculatedPoints.Count;
+
+        for (float t = minT; t <= maxT; t += deltaT)
+        {
+            Vector3 nextPoint = GetPrecalculatedPoint(t);
+            float distance = (refPosition - nextPoint).magnitude;
+            if (distance < closestDist)
+            {
+                closestDist = distance;
+                closestT = t;
+            }
+        }
+
+        return closestT;
+    }
+
     private float CalculateSegmentLength(int index) //calculate length for segment at given index
     {
         Vector3 oldPoint = GetPoint(LocalTToGlobalT(index, 0)), newPoint;

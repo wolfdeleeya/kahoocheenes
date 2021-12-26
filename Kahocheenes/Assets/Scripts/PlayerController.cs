@@ -19,6 +19,7 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         _transform = transform;
+        DontDestroyOnLoad(gameObject);
     }
 
     public void Initialize(int id)
