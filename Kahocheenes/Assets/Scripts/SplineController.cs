@@ -189,7 +189,7 @@ public class SplineController : MonoBehaviour
         return GetPrecalculatedPoint(closestT);
     }
 
-    float FindTForPoint(Vector3 refPosition)
+    public float FindTForPoint(Vector3 refPosition)
     {
         float closestT = 0, secondClosestT = 0;
         float closestDist = (refPosition - GetPrecalculatedPoint(0)).magnitude, secondClosestDist = closestDist;

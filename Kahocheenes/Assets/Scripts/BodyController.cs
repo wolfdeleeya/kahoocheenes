@@ -1,44 +1,49 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class BodyController : MonoBehaviour
 {
     // Start is called before the first frame update
-    [Header("Stabilizator")]
-    public float stability = 0.3f;
+    [Header("Stabilizator")] public float stability = 0.3f;
     public float speed = 2.0f;
     public bool isGrounded = false;
     public Transform CenterOfMass;
 
-    [Header("Wheels")]
-    public RayCastWheel[] wheels;
+    [Header("Wheels")] public RayCastWheel[] wheels;
 
-    [Header("velocity")]
-    public float VelocityMag;
+    [Header("velocity")] public float VelocityMag;
     public bool slowStart;
     public float forceFactor;
     public float maxVelocity = 30;
     public float minVelocity = -10;
     public float Torque;
 
-    [Header("All Drag")]
-    public float Drag;
+    [Header("All Drag")] public float Drag;
     public float AngularDragY;
     public float driftPercent;
 
+    [SerializeField] private bool getInputFromKeyboard;
+    
     private Rigidbody rb;
-    private float input;
-    private float turn;
     private float deltaTime;
 
 
     private float GravityPercent;
     private float forwardAcceleration;
-    private float forwardLastVelocity = 0;
     private Vector3 some;
     private float XRotate;
-    
+    private Transform _transform;
+
+    public int ForwardInput { get; set; }
+    public int SideInput { get; set; }
+
+    private void Awake()
+    {
+        _transform = transform;
+    }
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -47,20 +52,18 @@ public class BodyController : MonoBehaviour
 
     private void Update()
     {
-        
-        
-        
         //check if Car is Grounded
 
         int sum = 0;
-        foreach(RayCastWheel wheel in wheels)
+        foreach (RayCastWheel wheel in wheels)
         {
             if (wheel.isGrounded)
             {
                 sum += 1;
             }
         }
-        if(sum < 2)
+
+        if (sum < 2)
         {
             isGrounded = false;
         }
@@ -68,35 +71,36 @@ public class BodyController : MonoBehaviour
         {
             isGrounded = true;
         }
+
         Debug.Log(sum);
-       
     }
 
 
     private float CalcLineVel(float Time)
     {
-        return 5*Time;
+        return 5 * Time;
     }
 
     private float CalcLineTime(float Vel)
     {
-        return Vel/5;
+        return Vel / 5;
     }
 
     private float CalcFastVel(float Time)
     {
-        return Mathf.Log(Time * forceFactor +1,1.07f);
+        return Mathf.Log(Time * forceFactor + 1, 1.07f);
     }
 
     private float CalcFastTime(float Vel)
     {
-        return (Mathf.Pow(1.07f,Vel)-1)/forceFactor;
+        return (Mathf.Pow(1.07f, Vel) - 1) / forceFactor;
     }
 
     private float CalcSlowVel(float Time)
     {
         return Mathf.Pow(2, Time * 1.5f) - 1;
     }
+
     private float CalcSlowTime(float Vel)
     {
         return Mathf.Log(Vel + 1, 2) / 1.5f;
@@ -105,55 +109,54 @@ public class BodyController : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-
         //Proba Stabilizator
+        var up = _transform.up;
         Vector3 predictedUp = Quaternion.AngleAxis(
-               rb.angularVelocity.magnitude * Mathf.Rad2Deg * stability / speed,
-               rb.angularVelocity
-           ) * transform.up;
+            rb.angularVelocity.magnitude * Mathf.Rad2Deg * stability / speed,
+            rb.angularVelocity
+        ) * up;
         //Debug.DrawRay(new Vector3(rb.position.x, rb.position.y - 0.5f, rb.position.z), predictedUp, Color.black);
         Vector3 torqueVector = Vector3.Cross(predictedUp, Vector3.up);
         //Debug.DrawRay(new Vector3(rb.position.x, rb.position.y - 0.5f, rb.position.z), Vector3.up, Color.blue);
-        Debug.DrawRay(new Vector3(rb.position.x, rb.position.y +4, rb.position.z), torqueVector * speed * speed, Color.red);
+        Debug.DrawRay(new Vector3(rb.position.x, rb.position.y + 4, rb.position.z), torqueVector * speed * speed,
+            Color.red);
 
-        
-        
 
         //rb.AddForceAtPosition(Force * input * Vector3.ProjectOnPlane(transform.forward, plane.up).normalized, new Vector3 (rb.position.x, rb.position.y,rb.position.z));
 
         // some = Force * input * Vector3.ProjectOnPlane(transform.forward, plane.up).normalized;
-       // Debug.DrawRay(new Vector3(rb.position.x, rb.position.y, rb.position.z), some, Color.blue);
+        // Debug.DrawRay(new Vector3(rb.position.x, rb.position.y, rb.position.z), some, Color.blue);
 
-        
+
         //turn Force
+        if(getInputFromKeyboard)
+            SideInput = (int)Input.GetAxis("Horizontal");
 
-        turn = Input.GetAxis("Horizontal");
+        rb.AddTorque(up * (SideInput * Torque), ForceMode.VelocityChange);
 
-        rb.AddTorque(transform.up * turn * Torque, ForceMode.VelocityChange);
-            
         // transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles + new Vector3(0f, turn * Torque * Time.deltaTime, 0f));
 
-        
 
         //Drift
-       
+
         //angularDrag
 
-        Vector3 locVelAng = transform.InverseTransformDirection(rb.angularVelocity);
+        Vector3 locVelAng = _transform.InverseTransformDirection(rb.angularVelocity);
         locVelAng.y *= 1.0f - AngularDragY;
-        
-        rb.angularVelocity = transform.TransformDirection(locVelAng);
+
+        rb.angularVelocity = _transform.TransformDirection(locVelAng);
 
 
         if (isGrounded)
         {
             //forward and backward force
-            input = Input.GetAxis("Vertical");
+            if(getInputFromKeyboard)
+                ForwardInput = (int)Input.GetAxis("Vertical");
 
             //if we dont press gas or reverse or we do when we want to slow down we activate drag
-            Vector3 locVel = transform.InverseTransformDirection(rb.velocity);
+            Vector3 locVel = _transform.InverseTransformDirection(rb.velocity);
 
-            if (isGrounded && (input == 0 || (locVel.z * input) < 0))
+            if (isGrounded && (ForwardInput == 0 || (locVel.z * ForwardInput) < 0))
             {
                 rb.drag = Drag;
             }
@@ -165,9 +168,8 @@ public class BodyController : MonoBehaviour
             //calculate forward and backward Force
 
 
-            if (input > 0)
+            if (ForwardInput > 0)
             {
-
                 VelocityMag = rb.velocity.magnitude;
                 if (VelocityMag < maxVelocity)
                 {
@@ -180,14 +182,19 @@ public class BodyController : MonoBehaviour
                     float acceleration = (NextVelocityMag - VelocityMag) / deltaTime;
 
                     float ForceTrue = rb.mass * acceleration;
-                    Debug.Log("VelocityMag:" + VelocityMag + "Time: " + time + "DeltaTime:" + deltaTime + "\nNextVelocityMag:" + NextVelocityMag + "acceleration:" + acceleration + "ForceTrue:" + ForceTrue);
-                    rb.AddForceAtPosition(ForceTrue * transform.forward.normalized, new Vector3(rb.position.x, rb.position.y, rb.position.z));
-                 }
-            }else if (input < 0){
+                    Debug.Log("VelocityMag:" + VelocityMag + "Time: " + time + "DeltaTime:" + deltaTime +
+                              "\nNextVelocityMag:" + NextVelocityMag + "acceleration:" + acceleration + "ForceTrue:" +
+                              ForceTrue);
+                    var rbPos = rb.position;
+                    rb.AddForceAtPosition(ForceTrue * _transform.forward.normalized,
+                        new Vector3(rbPos.x, rbPos.y, rbPos.z));
+                }
+            }
+            else if (ForwardInput < 0)
+            {
                 VelocityMag = rb.velocity.magnitude;
                 if (VelocityMag > minVelocity)
                 {
-
                     float time = CalcLineTime(VelocityMag);
 
                     deltaTime = Time.fixedDeltaTime;
@@ -196,43 +203,47 @@ public class BodyController : MonoBehaviour
                     float acceleration = (NextVelocityMag - VelocityMag) / deltaTime;
 
                     float ForceTrue = rb.mass * acceleration;
-                    Debug.Log("VelocityMag:" + VelocityMag + "Time: " + time + "DeltaTime:" + deltaTime + "\nNextVelocityMag:" + NextVelocityMag + "acceleration:" + acceleration + "ForceTrue:" + ForceTrue);
-                    rb.AddForceAtPosition(ForceTrue * transform.forward.normalized, new Vector3(rb.position.x, rb.position.y, rb.position.z));
+                    Debug.Log("VelocityMag:" + VelocityMag + "Time: " + time + "DeltaTime:" + deltaTime +
+                              "\nNextVelocityMag:" + NextVelocityMag + "acceleration:" + acceleration + "ForceTrue:" +
+                              ForceTrue);
+                    var rbPos = rb.position;
+                    rb.AddForceAtPosition(ForceTrue * _transform.forward.normalized,
+                        new Vector3(rbPos.x, rbPos.y, rbPos.z));
                 }
             }
 
             //drift force
 
-            locVel = transform.InverseTransformDirection(rb.velocity);
+            locVel = _transform.InverseTransformDirection(rb.velocity);
 
-            rb.AddForceAtPosition(locVel.x * -transform.right * driftPercent, new Vector3(rb.position.x, rb.position.y , rb.position.z));
-            Debug.DrawRay(new Vector3(rb.position.x, rb.position.y , rb.position.z), locVel.x * -transform.right * driftPercent, Color.red);
+            var right = _transform.right;
+            rb.AddForceAtPosition(locVel.x * -right * driftPercent,
+                new Vector3(rb.position.x, rb.position.y, rb.position.z));
+            var position = rb.position;
+            Debug.DrawRay(new Vector3(position.x, position.y, position.z),
+                locVel.x * -right * driftPercent, Color.red);
 
             //normal drag
 
 
-
-            rb.AddForceAtPosition(locVel.z * transform.forward * -GravityPercent, new Vector3(rb.position.x, rb.position.y , rb.position.z));
-            Debug.DrawRay(new Vector3(rb.position.x, rb.position.y, rb.position.z), locVel.z * transform.forward * -GravityPercent, Color.red);
-
-
-
-            
+            rb.AddForceAtPosition(locVel.z * _transform.forward * -GravityPercent,
+                new Vector3(rb.position.x, rb.position.y, rb.position.z));
+            Debug.DrawRay(new Vector3(rb.position.x, rb.position.y, rb.position.z),
+                locVel.z * _transform.forward * -GravityPercent, Color.red);
         }
-        else if (!isGrounded )//&& (transform.rotation.x > 0.10f || transform.rotation.x < -0.10f))
+        else if (!isGrounded) //&& (transform.rotation.x > 0.10f || transform.rotation.x < -0.10f))
         {
-            
             // Update is called once per frame
-            
+
             predictedUp = Quaternion.AngleAxis(
                 rb.angularVelocity.magnitude * Mathf.Rad2Deg * stability / speed,
                 rb.angularVelocity
-            ) * transform.up;
+            ) * _transform.up;
             torqueVector = Vector3.Cross(predictedUp, Vector3.up);
-            rb.AddTorque(torqueVector * speed * speed);     
-            
+            rb.AddTorque(torqueVector * speed * speed);
+
             //stop over rotate when jump 
-            XRotate = transform.rotation.x;
+            XRotate = _transform.rotation.x;
 
             //rb.AddTorque(transform.right * -rb.angularVelocity.x * 1f, ForceMode.VelocityChange);
             //transform.localEulerAngles = new Vector3(Mathf.Clamp(transform.rotation.x, -15, 15), transform.localEulerAngles.y, transform.localEulerAngles.z);
