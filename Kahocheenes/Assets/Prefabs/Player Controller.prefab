@@ -46,3 +46,4 @@ MonoBehaviour:
   controlsHandlerPrefabs:
   - {fileID: 766695311295204018, guid: ce3f32b8e5d6e9148ac98137ea8f50f6, type: 3}
   - {fileID: 8233171952182640214, guid: 2eab63c670078c547b95eea929d1d3da, type: 3}
+  waitTimeBeforeInit: 0.5

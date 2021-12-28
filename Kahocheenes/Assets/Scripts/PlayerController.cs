@@ -6,6 +6,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private List<GameObject> controlsHandlerPrefabs;
+    [SerializeField] private float waitTimeBeforeInit;
     private AbstractControlsHandler _currentControlsHandler;
     private Transform _transform;
 
@@ -40,9 +41,10 @@ public class PlayerController : MonoBehaviour
             .GetComponent<AbstractControlsHandler>();
         _currentControlsHandler.Initialize(Id);
     }
-
+    
     private void OnDestroy()
     {
-        SceneManager.Instance.OnSceneChanged.RemoveListener(UpdateHandlerBasedOnScene);
+        if (SceneManager.Instance)
+            SceneManager.Instance.OnSceneChanged.RemoveListener(UpdateHandlerBasedOnScene);
     }
 }

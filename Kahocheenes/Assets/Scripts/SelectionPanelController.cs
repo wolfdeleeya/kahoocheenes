@@ -34,6 +34,7 @@ public class SelectionPanelController : MonoBehaviour
 
     public void Activate()
     {
+        Debug.Log(gameObject);
         playerVehicleImage.enabled = true;
         voteImage.enabled = true;
         playerBorder.enabled = true;
@@ -50,6 +51,7 @@ public class SelectionPanelController : MonoBehaviour
 
     public void ChangeMaterial(PlayerColorSO playerColor)
     {
+        Debug.Log(gameObject);
         playerBorder.material = playerColor.UIMaterial;
         _currentColor = playerColor;
         var materials = vehicleRenderers[_currentVehicleIndex].materials;

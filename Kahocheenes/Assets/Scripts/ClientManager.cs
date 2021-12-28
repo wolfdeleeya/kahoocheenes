@@ -5,12 +5,11 @@ using UnityEngine;
 
 public class ClientManager : MonoBehaviour
 {
-    [HideInInspector] public UnityEventGameObject OnPlayerCreated = new UnityEventGameObject();
+    public UnityEventGameObject OnPlayerCreated = new UnityEventGameObject();
     [SerializeField] private GameObject playerControllerPrefab;
 
-    private List<GameObject> _spawnedPlayerControllers = new List<GameObject>();
+    private List<PlayerController> _spawnedPlayerControllers = new List<PlayerController>();
 
-    private Transform _transform;
     public static ClientManager Instance { get; private set; }
 
     public int NumOfPlayers
@@ -18,7 +17,7 @@ public class ClientManager : MonoBehaviour
         get => _spawnedPlayerControllers.Count;
     }
 
-    public GameObject GetPlayerController(int index) => _spawnedPlayerControllers[index];
+    public PlayerController GetPlayerController(int index) => _spawnedPlayerControllers[index];
 
     private void Awake()
     {
@@ -30,21 +29,20 @@ public class ClientManager : MonoBehaviour
 
         DontDestroyOnLoad(gameObject);
         Instance = this;
-        _transform = transform;
     }
 
     public void OnClientConnectedHandler(int clientId)
     {
-        var player = Instantiate(playerControllerPrefab, _transform).GetComponent<PlayerController>();
+        var player = Instantiate(playerControllerPrefab).GetComponent<PlayerController>();
         player.Initialize(clientId);
-        _spawnedPlayerControllers.Add(player.gameObject);
+        _spawnedPlayerControllers.Add(player);
         OnPlayerCreated.Invoke(player.gameObject);
     }
 
     public void OnGameDisconnected()
     {
         foreach (var player in _spawnedPlayerControllers)
-            Destroy(player);
+            Destroy(player.gameObject);
         _spawnedPlayerControllers.Clear();
     }
 }

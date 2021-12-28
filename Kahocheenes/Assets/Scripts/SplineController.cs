@@ -10,7 +10,6 @@ public class SplineControllerEditor : Editor
 {
     public override void OnInspectorGUI()
     {
-
         var obj = (SplineController) target;
         if (GUILayout.Button("Recalculate Spline"))
             obj.RecalculateSpline();
@@ -32,7 +31,7 @@ public class SplineController : MonoBehaviour
     [SerializeField] private List<Vector3> calculatedPoints = new List<Vector3>();
     [SerializeField] private List<float> lengths = new List<float>();
     [SerializeField] private float totalLength;
-    
+
     [Header("Debug properties")] [SerializeField]
     private int debugPointsSampleSize;
 
@@ -226,6 +225,13 @@ public class SplineController : MonoBehaviour
         }
 
         return closestT;
+    }
+
+    public Vector3 FindForwardVectorForT(float t)
+    {
+        int indexT = (int) (t * (calculatedPoints.Count - 1));
+        int indexT1Up = (indexT + 1) % calculatedPoints.Count;
+        return calculatedPoints[indexT1Up] - calculatedPoints[indexT];
     }
 
     private float CalculateSegmentLength(int index) //calculate length for segment at given index

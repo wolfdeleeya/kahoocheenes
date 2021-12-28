@@ -18,7 +18,7 @@ public class SceneManager : MonoBehaviour
         private set
         {
             _currentScene = value;
-            OnSceneChanged.Invoke((int) _currentScene);
+            UnityEngine.SceneManagement.SceneManager.LoadScene(_currentScene);
         }
     }
 
@@ -34,12 +34,17 @@ public class SceneManager : MonoBehaviour
         Instance = this;
     }
 
-    public void ChangeScene(Scene scene)
+    private void Start()
     {
-        int sceneIndex = (int) scene;
-        CurrentScene = sceneIndex;
-        UnityEngine.SceneManagement.SceneManager.LoadScene(sceneIndex);
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded +=
+            (scene, mode) => OnSceneChanged.Invoke(scene.buildIndex);
     }
-    
-    public enum Scene { MainMenu, Gameplay}
+
+    public void ChangeScene(Scene scene) => CurrentScene = (int) scene;
+
+    public enum Scene
+    {
+        MainMenu,
+        Gameplay
+    }
 }

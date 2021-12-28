@@ -1,11 +1,10 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GameplayCameraController : MonoBehaviour
 {
-    [SerializeField] private bool destroyPlayersByDistance;
+    [SerializeField] private Vector3 minCameraOffset;
+    [SerializeField] private Vector3 maxCameraOffset;
+    [SerializeField] private bool destroyPlayersByDistance; //TODO: MAKE CAMERA FOLLOW BEHIND PLAYERS
     [SerializeField] private float distanceToDestroyPlayer;
     [SerializeField] private float moveLerpSpeed;
     [SerializeField] private float rotationLerpSpeed;
@@ -22,25 +21,13 @@ public class GameplayCameraController : MonoBehaviour
         _transform = transform;
     }
 
-    private void Start()
-    {
-        positionTracker.OnLastPlayerChanged.AddListener(() => _lastPlayer = positionTracker.LastPlayer.ControlsHandler);        //pogledaj ocemo li samo gledati preko forward vektora
-    }
-
-    private void Update()
-    {
-        if (destroyPlayersByDistance && (_transform.position - _lastPlayer.CarTransform.position).magnitude <
-            distanceToDestroyPlayer)
-            _lastPlayer.DestroyPlayer();
-    }
-
     private void LateUpdate()
     {
         Vector3 currentPos = _transform.position;
         Vector3 avgPosition = positionTracker.AveragePosition;
         Vector3 nextPos = positionTracker.AveragePositionOnSpline;
 
-        Vector3 resultPos = Vector3.Lerp(currentPos, nextPos, moveLerpSpeed * Time.deltaTime);
+        Vector3 resultPos = Vector3.Lerp(currentPos, nextPos, moveLerpSpeed * Time.deltaTime) + minCameraOffset;        //hotfix
         _transform.position = resultPos;
 
         Vector3 forward = (avgPosition - resultPos).normalized;

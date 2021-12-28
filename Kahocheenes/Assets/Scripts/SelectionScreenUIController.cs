@@ -14,14 +14,23 @@ public class SelectionScreenUIController : MonoBehaviour
     private void Start()
     {
         NetworkControllerManager.Instance.OnConnectionCodeReceived.AddListener(SetGameCode);
+
+        var playerSelManager = PlayerSelectionManager.Instance;
+        playerSelManager.OnSelectionCleared.AddListener(DeactivateAllPanels);
+        playerSelManager.OnSelectionAdded.AddListener(PlayerConnected);
+        playerSelManager.OnPlayerVehicleChanged.AddListener(ChangeVehicle);
+        playerSelManager.OnPlayerVehicleMaterialChanged.AddListener(ChangeMaterial);
+        playerSelManager.OnPlayerVoteChanged.AddListener(PlayerChangeVote);
     }
 
-    public void ChangeVehicle(int index, int carIndex) => playerSelectionPanels[index].ChangeVehicle(carIndex);
+    public void ChangeVehicle(int playerId) =>
+        playerSelectionPanels[playerId - 1].ChangeVehicle(PlayerSelectionManager.Instance.GetPlayerCarIndex(playerId));
 
-    public void ChangeMaterial(int index, PlayerColorSO playerColor) =>
-        playerSelectionPanels[index].ChangeMaterial(playerColor);
+    public void ChangeMaterial(int playerId) =>
+        playerSelectionPanels[playerId - 1].ChangeMaterial(PlayerSelectionManager.Instance.GetPlayerColor(playerId));
 
-    public void PlayerChangeVote(int index, bool isFor) => playerSelectionPanels[index].ChangeVote(isFor);
+    public void PlayerChangeVote(int playerId) => playerSelectionPanels[playerId - 1]
+        .ChangeVote(PlayerSelectionManager.Instance.GetPlayerVote(playerId));
 
     public void PlayerConnected() => playerSelectionPanels[_numOfPlayers++].Activate();
 
@@ -33,9 +42,16 @@ public class SelectionScreenUIController : MonoBehaviour
             panel.Deactivate();
         _numOfPlayers = 0;
     }
-    
+
     private void OnDestroy()
     {
         NetworkControllerManager.Instance.OnConnectionCodeReceived.RemoveListener(SetGameCode);
+        
+        var playerSelManager = PlayerSelectionManager.Instance;
+        playerSelManager.OnSelectionCleared.RemoveListener(DeactivateAllPanels);
+        playerSelManager.OnSelectionAdded.RemoveListener(PlayerConnected);
+        playerSelManager.OnPlayerVehicleChanged.RemoveListener(ChangeVehicle);
+        playerSelManager.OnPlayerVehicleMaterialChanged.RemoveListener(ChangeMaterial);
+        playerSelManager.OnPlayerVoteChanged.RemoveListener(PlayerChangeVote);
     }
 }

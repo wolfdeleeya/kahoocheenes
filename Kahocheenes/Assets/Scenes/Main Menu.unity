@@ -198,6 +198,81 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 12370139}
   m_CullTransparentMesh: 1
+--- !u!1 &124980042
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 124980044}
+  - component: {fileID: 124980043}
+  m_Layer: 0
+  m_Name: Player Selection Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &124980043
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 124980042}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d901aec9254d3e54b9714d395a04f136, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnSelectionAdded:
+    m_PersistentCalls:
+      m_Calls: []
+  OnSelectionCleared:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPlayerVehicleChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPlayerVehicleMaterialChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPlayerVoteChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  onVotesChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  availableColors:
+  - PlayerColor: {fileID: 11400000, guid: b67aafcf7d71c274085be2d1db49a048, type: 2}
+    IsSelected: 0
+  - PlayerColor: {fileID: 11400000, guid: 8d3f1603593cdd843aa97dc27f5f5b55, type: 2}
+    IsSelected: 0
+  - PlayerColor: {fileID: 11400000, guid: 329aa988daa631144a16e8ff9f69afeb, type: 2}
+    IsSelected: 0
+  - PlayerColor: {fileID: 11400000, guid: ff8b9dc7dd365aa47bcc1deb9e8cddc6, type: 2}
+    IsSelected: 0
+  - PlayerColor: {fileID: 11400000, guid: 6021831217b229848b52c56726c3c402, type: 2}
+    IsSelected: 0
+  carPrefabs:
+  - {fileID: 7808819624823294610, guid: 2960696f180b5c74d8e45bea97b8ba9b, type: 3}
+  - {fileID: 7808819624823294610, guid: 642db5960b61f7f47bdb6ba319447652, type: 3}
+--- !u!4 &124980044
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 124980042}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &148365325
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2205,7 +2280,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 642053196}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: SelectionScreenController, Assembly-CSharp
         m_MethodName: OnScreenChanged
         m_Mode: 0
@@ -2275,7 +2350,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 642053195}
-  - component: {fileID: 642053196}
   - component: {fileID: 642053197}
   m_Layer: 5
   m_Name: Player HUB Screen
@@ -2305,36 +2379,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &642053196
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 642053194}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d901aec9254d3e54b9714d395a04f136, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  onVotesChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  availableColors:
-  - PlayerColor: {fileID: 11400000, guid: b67aafcf7d71c274085be2d1db49a048, type: 2}
-    IsSelected: 0
-  - PlayerColor: {fileID: 11400000, guid: 8d3f1603593cdd843aa97dc27f5f5b55, type: 2}
-    IsSelected: 0
-  - PlayerColor: {fileID: 11400000, guid: 329aa988daa631144a16e8ff9f69afeb, type: 2}
-    IsSelected: 0
-  - PlayerColor: {fileID: 11400000, guid: ff8b9dc7dd365aa47bcc1deb9e8cddc6, type: 2}
-    IsSelected: 0
-  - PlayerColor: {fileID: 11400000, guid: 6021831217b229848b52c56726c3c402, type: 2}
-    IsSelected: 0
-  carPrefabs:
-  - {fileID: 5071308488097338860, guid: a15024819e596e440bed99fb9d17b099, type: 3}
-  - {fileID: 8132195306390175675, guid: fbb1ff6538f344a4797665d47c7b8bbd, type: 3}
-  uiController: {fileID: 642053197}
 --- !u!114 &642053197
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3579,9 +3623,22 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 124980043}
+        m_TargetAssemblyTypeName: PlayerSelectionManager, Assembly-CSharp
+        m_MethodName: ClearSelection
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   OnConnectionCodeReceived:
     m_PersistentCalls:
       m_Calls: []
+  pingTimeInSeconds: 10
 --- !u!1 &1040380343
 GameObject:
   m_ObjectHideFlags: 0
@@ -3750,7 +3807,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OnPlayerCreated:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 124980043}
+        m_TargetAssemblyTypeName: PlayerSelectionManager, Assembly-CSharp
+        m_MethodName: AddSelection
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   playerControllerPrefab: {fileID: 2417565848006592260, guid: a621b8729fd8a11438eb1b6dceaa935b, type: 3}
 --- !u!4 &1058709081
 Transform:

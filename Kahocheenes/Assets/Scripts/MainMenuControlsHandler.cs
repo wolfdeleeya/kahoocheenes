@@ -4,48 +4,41 @@ using UnityEngine;
 
 public class MainMenuControlsHandler : AbstractControlsHandler
 {
-    private SelectionScreenController _selectionScreenController;
     public int PlayerID { get; private set; }
 
     public override void Initialize(int clientId)
     {
         PlayerID = clientId;
-        _selectionScreenController = FindObjectOfType<SelectionScreenController>();
         Debug.Log("Player " + PlayerID + " connected.");
     }
 
     public override void LeftCommand(ControlsState state)
     {
         if (state == ControlsState.Pressed)
-            _selectionScreenController.SwitchColor(PlayerID, false);
-        Debug.Log("Player " + PlayerID + (state == ControlsState.Released ? " RELEASED " : " PRESSED ") + " LEFT!");
+            PlayerSelectionManager.Instance.SwitchColor(PlayerID, false);
     }
 
     public override void RightCommand(ControlsState state)
     {
         if (state == ControlsState.Pressed)
-            _selectionScreenController.SwitchColor(PlayerID, true);
-        Debug.Log("Player " + PlayerID + (state == ControlsState.Released ? " RELEASED " : " PRESSED ") + " RIGHT!");
+            PlayerSelectionManager.Instance.SwitchColor(PlayerID, true);
     }
 
     public override void UpCommand(ControlsState state)
     {
         if (state == ControlsState.Pressed)
-            _selectionScreenController.SwitchCar(PlayerID, true);
-        Debug.Log("Player " + PlayerID + (state == ControlsState.Released ? " RELEASED " : " PRESSED ") + " UP!");
+            PlayerSelectionManager.Instance.SwitchCar(PlayerID, true);
     }
 
     public override void DownCommand(ControlsState state)
     {
         if (state == ControlsState.Pressed)
-            _selectionScreenController.SwitchCar(PlayerID, false);
-        Debug.Log("Player " + PlayerID + (state == ControlsState.Released ? " RELEASED " : " PRESSED ") + " DOWN!");
+            PlayerSelectionManager.Instance.SwitchCar(PlayerID, false);
     }
 
     public override void ActionCommand(ControlsState state)
     {
         if (state == ControlsState.Pressed)
-            _selectionScreenController.ActionPressed(PlayerID);
-        Debug.Log("Player " + PlayerID + (state == ControlsState.Released ? " RELEASED " : " PRESSED ") + " ACTION!");
+            PlayerSelectionManager.Instance.ActionPressed(PlayerID);
     }
 }
