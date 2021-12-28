@@ -12,11 +12,20 @@ public class SplineControllerEditor : Editor
     {
         var obj = (SplineController) target;
         if (GUILayout.Button("Recalculate Spline"))
+        {
             obj.RecalculateSpline();
+            EditorUtility.SetDirty(target);
+        }
         if (GUILayout.Button("Calculate Lengths"))
+        {
             obj.RecalculateLengths();
+            EditorUtility.SetDirty(target);
+        }
         if (GUILayout.Button("Recalculate Equidistant Spline"))
+        {
             obj.RecalculateEquidistantSpline();
+            EditorUtility.SetDirty(target);
+        }
         base.OnInspectorGUI();
     }
 }
