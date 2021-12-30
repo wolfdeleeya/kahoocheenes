@@ -240,7 +240,7 @@ public class SplineController : MonoBehaviour
     {
         int indexT = (int) (t * (calculatedPoints.Count - 1));
         int indexT1Up = (indexT + 1) % calculatedPoints.Count;
-        return calculatedPoints[indexT1Up] - calculatedPoints[indexT];
+        return (calculatedPoints[indexT1Up] - calculatedPoints[indexT]).normalized;
     }
 
     private float CalculateSegmentLength(int index) //calculate length for segment at given index

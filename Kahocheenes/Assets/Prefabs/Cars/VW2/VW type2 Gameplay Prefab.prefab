@@ -693,7 +693,7 @@ MonoBehaviour:
   Drag: 1
   AngularDragY: 0.1
   driftPercent: 180
-  getInputFromKeyboard: 1
+  getInputFromKeyboard: 0
 --- !u!114 &6408918642923607934
 MonoBehaviour:
   m_ObjectHideFlags: 0

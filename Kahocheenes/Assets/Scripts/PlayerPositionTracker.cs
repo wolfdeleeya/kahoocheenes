@@ -1,11 +1,21 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class PlayerPositionTracker : MonoBehaviour
 {
     [SerializeField] private SplineController spline;
+    [SerializeField] private float distanceToDestroy;
+
+    [Header("Destruction Detection Debug")] [SerializeField]
+    private float averagePositionSphereRadius;
+
+    [SerializeField] private Color averagePositionSphereColor;
+    [SerializeField] private Color projectionLineColor;
+
 
     private List<GameplayControlsHandler> _players = new List<GameplayControlsHandler>();
 
@@ -19,13 +29,7 @@ public class PlayerPositionTracker : MonoBehaviour
 
     public Vector3 StartPositionForward => spline.FindForwardVectorForT(0);
 
-    private void Start()
-    {
-        int numOfPlayers = ClientManager.Instance.NumOfPlayers;
-        for (int i = 0; i < numOfPlayers; ++i)
-            _players.Add(
-                (GameplayControlsHandler) ClientManager.Instance.GetPlayerController(i).CurrentControlsHandler);
-    }
+    public void AddHandler(GameplayControlsHandler handler) => _players.Add(handler);
 
     private void Update()
     {
@@ -42,5 +46,39 @@ public class PlayerPositionTracker : MonoBehaviour
 
         if (numOfActivePlayers > 0)
             AveragePosition = averagePosition / numOfActivePlayers;
+
+        var backward = -AveragePositionForward;
+        GameplayControlsHandler worstHandler = _players[0];
+        float worstDistance = 0;
+        
+        var avPosOnSpline = AveragePositionOnSpline;
+        
+        foreach (var handler in _players)
+        {
+            if (handler.CarTransform)
+            {
+                var pos = handler.CarTransform.position;
+                var delta = pos - avPosOnSpline;
+                float backDistance = Vector3.Dot(backward, delta);
+                if (backDistance > worstDistance)
+                {
+                    worstDistance = backDistance;
+                    worstHandler = handler;
+                }
+            }
+        }
+        
+        if(worstDistance > distanceToDestroy)
+            worstHandler.DestroyPlayer();
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = averagePositionSphereColor;
+        var avPosOnLine = AveragePositionOnSpline;
+        Gizmos.DrawSphere(avPosOnLine, averagePositionSphereRadius);
+
+        Gizmos.color = projectionLineColor;
+        Gizmos.DrawLine(avPosOnLine, avPosOnLine - AveragePositionForward * distanceToDestroy);
     }
 }

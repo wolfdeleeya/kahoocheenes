@@ -146,6 +146,17 @@ public class BodyController : MonoBehaviour
 
         rb.angularVelocity = _transform.TransformDirection(locVelAng);
 
+        //if we dont press gas or reverse or we do when we want to slow down we activate drag
+        Vector3 locVel = _transform.InverseTransformDirection(rb.velocity);
+
+        if (isGrounded && (ForwardInput == 0 || locVel.z * ForwardInput < 0))
+        {
+            rb.drag = Drag;
+        }
+        else
+        {
+            rb.drag = 0;
+        }
 
         if (isGrounded)
         {
@@ -153,20 +164,7 @@ public class BodyController : MonoBehaviour
             if(getInputFromKeyboard)
                 ForwardInput = (int)Input.GetAxis("Vertical");
 
-            //if we dont press gas or reverse or we do when we want to slow down we activate drag
-            Vector3 locVel = _transform.InverseTransformDirection(rb.velocity);
-
-            if (isGrounded && (ForwardInput == 0 || (locVel.z * ForwardInput) < 0))
-            {
-                rb.drag = Drag;
-            }
-            else
-            {
-                rb.drag = 0;
-            }
-
             //calculate forward and backward Force
-
 
             if (ForwardInput > 0)
             {

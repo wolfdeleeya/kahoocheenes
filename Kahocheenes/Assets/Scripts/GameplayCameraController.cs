@@ -4,17 +4,11 @@ public class GameplayCameraController : MonoBehaviour
 {
     [SerializeField] private float yOffset;
     [SerializeField] private float zOffset;
-    [SerializeField] private bool destroyPlayersByDistance; //TODO: MAKE CAMERA FOLLOW BEHIND PLAYERS
-    [SerializeField] private float distanceToDestroyPlayer;
     [SerializeField] private float moveLerpSpeed;
     [SerializeField] private float rotationLerpSpeed;
     [SerializeField] private PlayerPositionTracker positionTracker;
-
-    private Vector3 _goalPos;
-
+    
     private Transform _transform;
-
-    private GameplayControlsHandler _lastPlayer;
 
     private void Awake()
     {
