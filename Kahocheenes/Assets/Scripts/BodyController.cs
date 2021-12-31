@@ -71,8 +71,6 @@ public class BodyController : MonoBehaviour
         {
             isGrounded = true;
         }
-
-        Debug.Log(sum);
     }
 
 
@@ -180,9 +178,6 @@ public class BodyController : MonoBehaviour
                     float acceleration = (NextVelocityMag - VelocityMag) / deltaTime;
 
                     float ForceTrue = rb.mass * acceleration;
-                    Debug.Log("VelocityMag:" + VelocityMag + "Time: " + time + "DeltaTime:" + deltaTime +
-                              "\nNextVelocityMag:" + NextVelocityMag + "acceleration:" + acceleration + "ForceTrue:" +
-                              ForceTrue);
                     var rbPos = rb.position;
                     rb.AddForceAtPosition(ForceTrue * _transform.forward.normalized,
                         new Vector3(rbPos.x, rbPos.y, rbPos.z));
@@ -201,9 +196,6 @@ public class BodyController : MonoBehaviour
                     float acceleration = (NextVelocityMag - VelocityMag) / deltaTime;
 
                     float ForceTrue = rb.mass * acceleration;
-                    Debug.Log("VelocityMag:" + VelocityMag + "Time: " + time + "DeltaTime:" + deltaTime +
-                              "\nNextVelocityMag:" + NextVelocityMag + "acceleration:" + acceleration + "ForceTrue:" +
-                              ForceTrue);
                     var rbPos = rb.position;
                     rb.AddForceAtPosition(ForceTrue * _transform.forward.normalized,
                         new Vector3(rbPos.x, rbPos.y, rbPos.z));

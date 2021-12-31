@@ -51,7 +51,6 @@ public class SelectionPanelController : MonoBehaviour
 
     public void ChangeMaterial(PlayerColorSO playerColor)
     {
-        Debug.Log(gameObject);
         playerBorder.material = playerColor.UIMaterial;
         _currentColor = playerColor;
         var materials = vehicleRenderers[_currentVehicleIndex].materials;

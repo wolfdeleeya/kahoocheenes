@@ -17,10 +17,10 @@ public class NetworkControllerManager : MonoBehaviour
     [SerializeField] private float pingTimeInSeconds = 10;
     private readonly byte[] pingMessage = {9};
 
-    private List<UnityEventControlsPair> _clientControlsEvents = new List<UnityEventControlsPair>();
-    private WebSocket _serverSocket = new WebSocket("ws://rainy-carpal-leptoceratops.glitch.me");
+    private List<UnityEventControlsPair> _clientControlsEvents;
+    private WebSocket _serverSocket;
     private string _connectionCode = String.Empty;
-    private ConcurrentQueue<byte[]> _messageQueue = new ConcurrentQueue<byte[]>();
+    private ConcurrentQueue<byte[]> _messageQueue;
 
     private const int LEN_OF_SERVER_CODE = 4;
 
@@ -49,7 +49,11 @@ public class NetworkControllerManager : MonoBehaviour
         Instance = this;
 
         DontDestroyOnLoad(gameObject);
-
+        
+        _serverSocket = new WebSocket("ws://rainy-carpal-leptoceratops.glitch.me");
+        _clientControlsEvents = new List<UnityEventControlsPair>();
+        _messageQueue = new ConcurrentQueue<byte[]>();
+        
         _serverSocket.Connect();
         _serverSocket.OnMessage += (sender, e) => _messageQueue.Enqueue(e.RawData);
         StartCoroutine(PingCRT());

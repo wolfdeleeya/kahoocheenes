@@ -6,20 +6,20 @@ using UnityEngine.Serialization;
 
 public class PlayerSelectionManager : MonoBehaviour
 {
-    [HideInInspector] public UnityEvent OnSelectionAdded = new UnityEvent();
-    [HideInInspector] public UnityEvent OnSelectionCleared = new UnityEvent();
-    [HideInInspector] public UnityEventInteger OnPlayerVehicleChanged = new UnityEventInteger();
-    [HideInInspector] public UnityEventInteger OnPlayerVehicleMaterialChanged = new UnityEventInteger();
-    [HideInInspector] public UnityEventInteger OnPlayerVoteChanged = new UnityEventInteger();
+    [HideInInspector] public UnityEvent OnSelectionAdded;
+    [HideInInspector] public UnityEvent OnSelectionCleared;
+    [HideInInspector] public UnityEventInteger OnPlayerVehicleChanged;
+    [HideInInspector] public UnityEventInteger OnPlayerVehicleMaterialChanged;
+    [HideInInspector] public UnityEventInteger OnPlayerVoteChanged;
 
     [SerializeField] private UnityEventInteger onVotesChanged;
 
     [SerializeField] private List<ColorSelection> availableColors;
-    [SerializeField] private List<GameObject> carPrefabs;
+    [SerializeField] private List<CarPrefabData> carPrefabs;
 
-    private List<int> _selectedCars = new List<int>();
-    private List<int> _selectedColors = new List<int>();
-    private List<bool> _currentVotes = new List<bool>();
+    private List<int> _selectedCars;
+    private List<int> _selectedColors;
+    private List<bool> _currentVotes;
     private int _matchStartVotes;
 
     public static PlayerSelectionManager Instance { get; private set; }
@@ -48,9 +48,19 @@ public class PlayerSelectionManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+        
+        OnSelectionAdded = new UnityEvent();
+        OnSelectionCleared = new UnityEvent();
+        OnPlayerVehicleChanged = new UnityEventInteger();
+        OnPlayerVehicleMaterialChanged = new UnityEventInteger();
+        OnPlayerVoteChanged = new UnityEventInteger();
+        
+        _selectedCars = new List<int>();
+        _selectedColors = new List<int>();
+        _currentVotes = new List<bool>();
     }
 
-    public GameObject GetPlayerCarPrefab(int playerId) => carPrefabs[_selectedCars[playerId - 1]];
+    public CarPrefabData GetPlayerCarPrefab(int playerId) => carPrefabs[_selectedCars[playerId - 1]];
 
     public int GetPlayerCarIndex(int playerId) => _selectedCars[playerId - 1];
 

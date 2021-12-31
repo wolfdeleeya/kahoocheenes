@@ -17,9 +17,6 @@ public class MenuController : MonoBehaviour
 
     [SerializeField] private UnityEventInteger onScreenChanged;
 
-    [SerializeField] private MenuUIAnimator animator;
-
-
     [SerializeField] private Slider musicSlider;
     [SerializeField] private Slider sfxSlider;
 
@@ -36,6 +33,9 @@ public class MenuController : MonoBehaviour
 
     public void SetMusicVolume(float amount) => GameSettingsManager.Instance.SfxVolume = amount;
 
+    public void DisconnectFromGame() => NetworkControllerManager.Instance.DisconnectFromServer();
 
+    public void ConnectToGame() => NetworkControllerManager.Instance.ConnectToServer();
+    
     public void Quit() => Application.Quit();
 }

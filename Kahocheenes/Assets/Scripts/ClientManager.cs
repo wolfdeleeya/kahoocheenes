@@ -8,7 +8,7 @@ public class ClientManager : MonoBehaviour
     public UnityEventGameObject OnPlayerCreated = new UnityEventGameObject();
     [SerializeField] private GameObject playerControllerPrefab;
 
-    private List<PlayerController> _spawnedPlayerControllers = new List<PlayerController>();
+    private List<PlayerController> _spawnedPlayerControllers;
 
     public static ClientManager Instance { get; private set; }
 
@@ -29,6 +29,7 @@ public class ClientManager : MonoBehaviour
 
         DontDestroyOnLoad(gameObject);
         Instance = this;
+        _spawnedPlayerControllers = new List<PlayerController>();
     }
 
     public void OnClientConnectedHandler(int clientId)

@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Nikola Gameplay.unity
     guid: e9e0e10b3d748e54fb7acb52b38a2702
+  - enabled: 1
+    path: Assets/Scenes/EndScreen.unity
+    guid: 742727e02bd2b1a4db42ec5fa7f98707
   m_configObjects: {}

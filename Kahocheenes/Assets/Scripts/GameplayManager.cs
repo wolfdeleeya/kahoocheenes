@@ -13,27 +13,41 @@ public class GameplayManager : MonoBehaviour
     public UnityEventInteger OnCountdownChanged;
 
     [SerializeField] private float countdownBetweenRounds;
-    [SerializeField] private int maxScore;
+    [SerializeField] private List<int> maxScores;
     [SerializeField] private List<ListInt> listOfScoreDeltas;
     [SerializeField] private PlayerPositionTracker positionTracker;
 
     private List<int> _scores;
     private int _playersLeft;
-    private List<GameplayControlsHandler> _handlers = new List<GameplayControlsHandler>();
+    private List<GameplayControlsHandler> _handlers;
+    private int _maxScore;
 
     public static GameplayManager Instance { get; private set; }
 
-    public int MaxScore => maxScore;
+    public int MaxScore => _maxScore;
+
+    public List<int> CurrentScores => _scores;
 
     private void Awake()
     {
         if (Instance)
         {
-            Destroy(gameObject);
-            return;
+            Destroy(Instance); //Destroy old Instance
         }
 
         Instance = this;
+
+        DontDestroyOnLoad(gameObject);
+        _handlers = new List<GameplayControlsHandler>();
+        _scores = new List<int>();
+        _maxScore = maxScores[ClientManager.Instance.NumOfPlayers - 2];
+        SceneManager.Instance.OnSceneChanged.AddListener(SceneChanged);
+    }
+
+    public void SceneChanged(int sceneIndex)
+    {
+        if (sceneIndex == 0)
+            Destroy(gameObject);
     }
 
     public void AddPlayer(GameplayControlsHandler handler)
@@ -54,31 +68,43 @@ public class GameplayManager : MonoBehaviour
 
         var scoreDeltas = listOfScoreDeltas[numOfPlayers - 2].List; //there's no score deltas for 0 and 1 player games
         int delta = scoreDeltas[_playersLeft];
-        _scores[playerIndex] = Mathf.Clamp(_scores[playerIndex], 0, maxScore);
+        _scores[playerIndex] += delta;
+        _scores[playerIndex] = Mathf.Clamp(_scores[playerIndex], 0, _maxScore);
         OnScoreChanged.Invoke(_scores);
         if (_playersLeft == 1)
         {
+            foreach (var handler in _handlers)
+                if (handler.IsAlive)
+                {
+                    handler.DestroyPlayer();
+                    break;
+                }
+        }
+        else if (_playersLeft == 0)
+        {
             RoundOver();
-            for(int i = 0;i<_scores.Count;++i)
-                if(_scores[i] == maxScore)
-                    GameOver(i);
+            for (int i = 0; i < _scores.Count; ++i)
+                if (_scores[i] == _maxScore)
+                    GameOver();
         }
     }
 
     public void RoundOver()
     {
         OnRoundOver.Invoke();
-        Debug.Log("ROUND OVER");
+        StartRound(false);
     }
 
-    public void GameOver(int winnerIndex)
+    public void GameOver()
     {
         OnGameOver.Invoke();
-        Debug.Log("GAME OVER");
+        SceneManager.Instance.ChangeScene(SceneManager.Scene.EndScreen);
     }
 
     public void StartRound(bool isFirstRound)
     {
+        if (isFirstRound)
+            _scores = new List<int>(new int[_handlers.Count]);
         var pos = isFirstRound ? positionTracker.StartPosition : positionTracker.AveragePosition;
         var forward = isFirstRound ? positionTracker.StartPositionForward : positionTracker.AveragePositionForward;
         foreach (var handler in _handlers)
@@ -90,10 +116,21 @@ public class GameplayManager : MonoBehaviour
         StartCoroutine(CountdownCRT());
     }
 
+    private void Update()
+    {
+        if (Input.GetKey(KeyCode.Space))
+            GameOver();
+    }
+
+    private void OnDestroy()
+    {
+        SceneManager.Instance.OnSceneChanged.RemoveListener(SceneChanged);
+    }
+
     private IEnumerator CountdownCRT()
     {
         float t = countdownBetweenRounds;
-        int lastCountdownNum = (int) Mathf.Ceil(t);
+        int lastCountdownNum = 0;
 
         while (t > 0)
         {

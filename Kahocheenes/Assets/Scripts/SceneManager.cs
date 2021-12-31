@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class SceneManager : MonoBehaviour
 {
-    public UnityEventInteger OnSceneChanged = new UnityEventInteger();
+    public UnityEventInteger OnSceneChanged;
 
     private int _currentScene;
 
@@ -45,6 +45,7 @@ public class SceneManager : MonoBehaviour
     public enum Scene
     {
         MainMenu,
-        Gameplay
+        Gameplay,
+        EndScreen
     }
 }

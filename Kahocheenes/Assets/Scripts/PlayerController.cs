@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private List<GameObject> controlsHandlerPrefabs;
     [SerializeField] private float waitTimeBeforeInit;
+    
     private AbstractControlsHandler _currentControlsHandler;
     private Transform _transform;
 
@@ -37,9 +38,12 @@ public class PlayerController : MonoBehaviour
     {
         if (_currentControlsHandler)
             Destroy(_currentControlsHandler.gameObject);
-        _currentControlsHandler = Instantiate(controlsHandlerPrefabs[scene], _transform)
-            .GetComponent<AbstractControlsHandler>();
-        _currentControlsHandler.Initialize(Id);
+        if (scene < controlsHandlerPrefabs.Count)
+        {
+            _currentControlsHandler = Instantiate(controlsHandlerPrefabs[scene], _transform)
+                .GetComponent<AbstractControlsHandler>();
+            _currentControlsHandler.Initialize(Id);
+        }
     }
     
     private void OnDestroy()

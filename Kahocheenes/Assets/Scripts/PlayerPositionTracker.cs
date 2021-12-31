@@ -16,20 +16,24 @@ public class PlayerPositionTracker : MonoBehaviour
     [SerializeField] private Color averagePositionSphereColor;
     [SerializeField] private Color projectionLineColor;
 
-
-    private List<GameplayControlsHandler> _players = new List<GameplayControlsHandler>();
+    private float _lastT;
+    private List<GameplayControlsHandler> _players;
 
     public Vector3 AveragePosition { get; private set; }
-
-    public Vector3 AveragePositionOnSpline => spline.FindClosestPointOnSpline(AveragePosition);
-
-    public Vector3 AveragePositionForward => spline.FindForwardVectorForT(spline.FindTForPoint(AveragePosition));
+    public Vector3 AveragePositionOnSpline;
+    public Vector3 AveragePositionForward;
 
     public Vector3 StartPosition => spline.GetPrecalculatedPoint(0);
 
     public Vector3 StartPositionForward => spline.FindForwardVectorForT(0);
 
     public void AddHandler(GameplayControlsHandler handler) => _players.Add(handler);
+
+    private void Awake()
+    {
+        _players = new List<GameplayControlsHandler>();
+        _lastT = 0;
+    }
 
     private void Update()
     {
@@ -47,18 +51,21 @@ public class PlayerPositionTracker : MonoBehaviour
         if (numOfActivePlayers > 0)
             AveragePosition = averagePosition / numOfActivePlayers;
 
+        float currentT = spline.FindClosestTOnSplineLocally(_lastT, AveragePosition);
+        AveragePositionOnSpline = spline.GetPrecalculatedPoint(currentT);
+        AveragePositionForward = spline.FindForwardVectorForT(currentT);
+        _lastT = currentT;
+
         var backward = -AveragePositionForward;
         GameplayControlsHandler worstHandler = _players[0];
         float worstDistance = 0;
-        
-        var avPosOnSpline = AveragePositionOnSpline;
-        
+
         foreach (var handler in _players)
         {
             if (handler.CarTransform)
             {
                 var pos = handler.CarTransform.position;
-                var delta = pos - avPosOnSpline;
+                var delta = pos - AveragePositionOnSpline;
                 float backDistance = Vector3.Dot(backward, delta);
                 if (backDistance > worstDistance)
                 {
@@ -67,8 +74,8 @@ public class PlayerPositionTracker : MonoBehaviour
                 }
             }
         }
-        
-        if(worstDistance > distanceToDestroy)
+
+        if (worstDistance > distanceToDestroy)
             worstHandler.DestroyPlayer();
     }
 

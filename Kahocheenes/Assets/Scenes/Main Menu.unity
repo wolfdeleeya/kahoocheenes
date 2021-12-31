@@ -257,8 +257,8 @@ MonoBehaviour:
   - PlayerColor: {fileID: 11400000, guid: 6021831217b229848b52c56726c3c402, type: 2}
     IsSelected: 0
   carPrefabs:
-  - {fileID: 7808819624823294610, guid: 2960696f180b5c74d8e45bea97b8ba9b, type: 3}
-  - {fileID: 7808819624823294610, guid: 642db5960b61f7f47bdb6ba319447652, type: 3}
+  - {fileID: 11400000, guid: c032b759e3a059048bbc8f956ffa7873, type: 2}
+  - {fileID: 11400000, guid: 1e5faef261651d747bfe058abd5028f3, type: 2}
 --- !u!4 &124980044
 Transform:
   m_ObjectHideFlags: 0
@@ -2292,7 +2292,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  animator: {fileID: 589738636}
   musicSlider: {fileID: 1126027469}
   sfxSlider: {fileID: 2126514433}
 --- !u!1 &640658215
@@ -3918,9 +3917,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1022469884}
-        m_TargetAssemblyTypeName: NetworkControllerManager, Assembly-CSharp
-        m_MethodName: DisconnectFromServer
+      - m_Target: {fileID: 589738637}
+        m_TargetAssemblyTypeName: MenuController, Assembly-CSharp
+        m_MethodName: DisconnectFromGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5165,9 +5164,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1022469884}
-        m_TargetAssemblyTypeName: NetworkControllerManager, Assembly-CSharp
-        m_MethodName: ConnectToServer
+      - m_Target: {fileID: 589738637}
+        m_TargetAssemblyTypeName: MenuController, Assembly-CSharp
+        m_MethodName: ConnectToGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

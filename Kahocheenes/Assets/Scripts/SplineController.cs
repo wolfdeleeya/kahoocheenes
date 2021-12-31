@@ -16,16 +16,19 @@ public class SplineControllerEditor : Editor
             obj.RecalculateSpline();
             EditorUtility.SetDirty(target);
         }
+
         if (GUILayout.Button("Calculate Lengths"))
         {
             obj.RecalculateLengths();
             EditorUtility.SetDirty(target);
         }
+
         if (GUILayout.Button("Recalculate Equidistant Spline"))
         {
             obj.RecalculateEquidistantSpline();
             EditorUtility.SetDirty(target);
         }
+
         base.OnInspectorGUI();
     }
 }
@@ -35,11 +38,11 @@ public class SplineController : MonoBehaviour
     [SerializeField] private List<Transform> splinePoints;
     [SerializeField] private int pointsSampleSize;
     [SerializeField, Range(0, 0.25f)] private float calculationStepLength;
-    [SerializeField, Range(0, 0.25f)] private float firstProximityCheckStepLength;
 
     [SerializeField] private List<Vector3> calculatedPoints = new List<Vector3>();
     [SerializeField] private List<float> lengths = new List<float>();
     [SerializeField] private float totalLength;
+    [SerializeField, Range(1e-5f, 0.5f)] private float deltaTForLocalSearch;
 
     [Header("Debug properties")] [SerializeField]
     private int debugPointsSampleSize;
@@ -158,32 +161,40 @@ public class SplineController : MonoBehaviour
         }
     }
 
-    public Vector3 FindClosestPointOnSpline(Vector3 refPosition)
+    public float FindClosestTOnSplineLocally(float lastT, Vector3 refPosition)
     {
-        float closestT = 0, secondClosestT = 0;
-        float closestDist = (refPosition - GetPrecalculatedPoint(0)).magnitude, secondClosestDist = closestDist;
+        float minT = lastT - deltaTForLocalSearch, maxT = lastT + deltaTForLocalSearch;
+        if (minT < 0)
+            minT += 1;
+        if (maxT > 1)
+            maxT -= 1;
+        int numOfPoints = calculatedPoints.Count;
+        int startIndex = (int) (minT * (numOfPoints - 1));
+        int endIndex = (int) (maxT * (numOfPoints - 1));
 
-        for (float t = firstProximityCheckStepLength; t <= 1; t += firstProximityCheckStepLength)
+        float minDistance = float.MaxValue;
+        int closestIndex = startIndex;
+
+        for (int i = startIndex; i != endIndex; i = (i + 1) % numOfPoints)
         {
-            Vector3 nextPoint = GetPrecalculatedPoint(t);
-            float distance = (refPosition - nextPoint).magnitude;
-            if (distance < closestDist)
+            float distance = (calculatedPoints[i] - refPosition).sqrMagnitude;
+            if (distance < minDistance)
             {
-                closestDist = distance;
-                closestT = t;
-            }
-            else if (distance < secondClosestDist)
-            {
-                secondClosestDist = distance;
-                secondClosestT = t;
+                minDistance = distance;
+                closestIndex = i;
             }
         }
 
-        float minT = closestT < secondClosestT ? closestT : secondClosestT;
-        float maxT = closestT > secondClosestT ? closestT : secondClosestT;
+        return (float) closestIndex / (numOfPoints - 1);
+    }
+
+    public Vector3 FindClosestPointOnSpline(Vector3 refPosition)
+    {
+        float closestT = 0;
+        float closestDist = (refPosition - GetPrecalculatedPoint(0)).magnitude;
         float deltaT = 1f / calculatedPoints.Count;
 
-        for (float t = minT; t <= maxT; t += deltaT)
+        for (float t = 0; t <= 1; t += deltaT)
         {
             Vector3 nextPoint = GetPrecalculatedPoint(t);
             float distance = (refPosition - nextPoint).magnitude;
@@ -199,30 +210,11 @@ public class SplineController : MonoBehaviour
 
     public float FindTForPoint(Vector3 refPosition)
     {
-        float closestT = 0, secondClosestT = 0;
-        float closestDist = (refPosition - GetPrecalculatedPoint(0)).magnitude, secondClosestDist = closestDist;
-
-        for (float t = firstProximityCheckStepLength; t <= 1; t += firstProximityCheckStepLength)
-        {
-            Vector3 nextPoint = GetPrecalculatedPoint(t);
-            float distance = (refPosition - nextPoint).magnitude;
-            if (distance < closestDist)
-            {
-                closestDist = distance;
-                closestT = t;
-            }
-            else if (distance < secondClosestDist)
-            {
-                secondClosestDist = distance;
-                secondClosestT = t;
-            }
-        }
-
-        float minT = closestT < secondClosestT ? closestT : secondClosestT;
-        float maxT = closestT > secondClosestT ? closestT : secondClosestT;
+        float closestT = 0;
+        float closestDist = (refPosition - GetPrecalculatedPoint(0)).magnitude;
         float deltaT = 1f / calculatedPoints.Count;
 
-        for (float t = minT; t <= maxT; t += deltaT)
+        for (float t = 0; t <= 1; t += deltaT)
         {
             Vector3 nextPoint = GetPrecalculatedPoint(t);
             float distance = (refPosition - nextPoint).magnitude;
